@@ -27,6 +27,7 @@ setup(
     keywords='edc notification',
     install_requires=[
         'edc_base',
+        'django_simple_history',
     ],
     classifiers=[
         'Environment :: Web Environment',
