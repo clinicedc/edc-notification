@@ -26,6 +26,6 @@ before_script:
 - flake8 edc_notification
 - mysql -e 'create database edc character set utf8;'
 script:
-- coverage run --source=edc_action_item manage.py test
+- coverage run --source=edc_notification manage.py test
 after_success:
 - coveralls
