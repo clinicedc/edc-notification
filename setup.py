@@ -26,6 +26,7 @@ setup(
     zip_safe=False,
     keywords='edc notification',
     install_requires=[
+        'twilio',
         'edc_base',
         'django_simple_history',
     ],
