@@ -29,6 +29,7 @@ setup(
         'twilio',
         'edc_base',
         'django_simple_history',
+        'requests'
     ],
     classifiers=[
         'Environment :: Web Environment',
