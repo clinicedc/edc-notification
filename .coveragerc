@@ -1,6 +1,8 @@
 [run]
+source = edc_notification
 omit =
     */wsgi.py
-    setup.py
-    manage.py
+    */config_utils/*
+    */navbars.py
     */migrations/*
+    */mommy_*
