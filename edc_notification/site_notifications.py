@@ -61,7 +61,9 @@ class SiteNotifications:
         """
         if notification_cls:
             self.loaded = True
-            if notification_cls.name not in self.registry:
+            display_names = [n.display_name for n in self.registry.values()]
+            if (notification_cls.name not in self.registry
+                    and notification_cls.display_name not in display_names):
                 self.registry.update({notification_cls.name: notification_cls})
 
                 models = getattr(notification_cls, "models", [])
@@ -74,7 +76,8 @@ class SiteNotifications:
                         self.models.update({model: [notification_cls]})
             else:
                 raise AlreadyRegistered(
-                    f"Notification {notification_cls.name} is already registered."
+                    f"Notification {notification_cls.name}: "
+                    f"{notification_cls.display_name} is already registered."
                 )
 
     def notify(self, instance=None, **kwargs):
@@ -88,7 +91,8 @@ class SiteNotifications:
         for notification_cls in self.registry.values():
             notification = notification_cls()
             if notification.notify(instance=instance, **kwargs):
-                notified.update({notification_cls.name: instance._meta.label_lower})
+                notified.update(
+                    {notification_cls.name: instance._meta.label_lower})
         return notified
 
     def update_notification_list(self, apps=None, schema_editor=None, verbose=False):
@@ -108,10 +112,12 @@ class SiteNotifications:
         # flag all notifications as disabled and re-enable as required
         Notification.objects.all().update(enabled=False)
         if site_notifications.loaded:
-            sys.stdout.write(style.MIGRATE_HEADING(f"Populating Notification model:\n"))
+            sys.stdout.write(style.MIGRATE_HEADING(
+                f"Populating Notification model:\n"))
             deleted, _ = self.delete_unregistered_notifications(apps=apps)
             if deleted and verbose:
-                sys.stdout.write(f"  * Deleted {deleted} orphaned notifications.\n")
+                sys.stdout.write(
+                    f"  * Deleted {deleted} orphaned notifications.\n")
             for name, notification_cls in site_notifications.registry.items():
                 if verbose:
                     sys.stdout.write(
@@ -120,22 +126,11 @@ class SiteNotifications:
                 try:
                     obj = Notification.objects.get(name=name)
                 except ObjectDoesNotExist:
-                    try:
-                        Notification.objects.create(
-                            name=name,
-                            display_name=notification_cls().display_name,
-                            enabled=True,
-                        )
-                    except IntegrityError as e:
-                        persisted = [
-                            (x.name, x.display_name)
-                            for x in Notification.objects.all().order_by("display_name")
-                        ]
-                        raise IntegrityError(
-                            f"{e} Got name='{name}', "
-                            f"display_name='{notification_cls().display_name}'. "
-                            f"Persisted notifications are {persisted}"
-                        )
+                    Notification.objects.create(
+                        name=name,
+                        display_name=notification_cls().display_name,
+                        enabled=True,
+                    )
                 else:
                     obj.display_name = notification_cls().display_name
                     obj.enabled = True
@@ -161,7 +156,8 @@ class SiteNotifications:
             and settings.EMAIL_BACKEND
             != "django.core.mail.backends.locmem.EmailBackend"
         ):
-            sys.stdout.write(style.MIGRATE_HEADING(f"Creating mailing lists:\n"))
+            sys.stdout.write(style.MIGRATE_HEADING(
+                f"Creating mailing lists:\n"))
             for name, notification_cls in self.registry.items():
                 message = None
                 notification = notification_cls()
@@ -202,7 +198,8 @@ class SiteNotifications:
             try:
                 mod = import_module(app)
                 try:
-                    before_import_registry = copy.copy(site_notifications._registry)
+                    before_import_registry = copy.copy(
+                        site_notifications._registry)
                     import_module(f"{app}.{module_name}")
                     if verbose:
                         sys.stdout.write(

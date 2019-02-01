@@ -10,9 +10,11 @@ from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
 
 from ..decorators import register
+from ..notification import ModelNotification
 from ..notification import GradedEventNotification, NewModelNotification
 from ..notification import Notification, UpdatedModelNotification
 from ..site_notifications import site_notifications, AlreadyRegistered
+from ..site_notifications import RegistryNotLoaded, NotificationNotRegistered
 from ..models import Notification as NotificationModel
 from .models import AE, Death
 
@@ -28,6 +30,7 @@ class TestNotification(TestCase):
             grade = 4
             models = ["ambition_prn.aeinitial", "ambition_prn.aefollowup"]
 
+        site_notifications.autodiscover(verbose=True)
         site_notifications._registry = {}
         site_notifications.register(G4EventNotification)
         site_notifications.update_notification_list()
@@ -56,6 +59,90 @@ class TestNotification(TestCase):
                 display_name = "Erik"
 
         self.assertEqual(cm.exception.__class__, AlreadyRegistered)
+
+    def test_site_notifications(self):
+
+        site_notifications._registry = {}
+        site_notifications.loaded = False
+        # registry
+        self.assertRaises(
+            RegistryNotLoaded,
+            getattr, site_notifications, 'registry')
+
+        # repr
+        class ErikNotification(Notification):
+            name = "erik"
+            display_name = "Erik"
+        site_notifications.register(notification_cls=ErikNotification)
+        self.assertTrue(repr(site_notifications))
+
+        # get
+        self.assertRaises(
+            NotificationNotRegistered,
+            site_notifications.get, "frisco")
+
+    def test_duplicate_notifications(self):
+        """Assert raises for non-unique names and non-unique display_names.
+        """
+
+        class ErikNotification1(Notification):
+            name = "erik"
+            display_name = "Erik"
+
+        class ErikNotification2(Notification):
+            name = "bob"
+            display_name = "Erik"
+
+        site_notifications._registry = {}
+        site_notifications.register(notification_cls=ErikNotification1)
+        self.assertRaises(
+            AlreadyRegistered,
+            site_notifications.register, notification_cls=ErikNotification2)
+        site_notifications.update_notification_list()
+
+    def test_get_notification_cls(self):
+        site_notifications._registry = {}
+
+        site_notifications.loaded = False
+
+        self.assertRaises(
+            RegistryNotLoaded,
+            site_notifications.get, "erik")
+
+        site_notifications.update_notification_list()
+
+        class ErikNotification(Notification):
+            name = "erik"
+            display_name = "Erik"
+        site_notifications.register(notification_cls=ErikNotification)
+
+        self.assertEqual(
+            site_notifications.get("erik"), ErikNotification)
+
+    def test_notification_model(self):
+        """Assert repr and str.
+        """
+        site_notifications._registry = {}
+
+        class ErikNotification(Notification):
+            name = "erik"
+            display_name = "Erik"
+        site_notifications.register(notification_cls=ErikNotification)
+        site_notifications.update_notification_list()
+        notification = NotificationModel.objects.get(name="erik")
+        self.assertTrue(str(notification))
+
+    def test_notification(self):
+        """Assert repr and str.
+        """
+        site_notifications._registry = {}
+
+        class SomeNotification(Notification):
+            name = "erik"
+            display_name = "Erik"
+
+        self.assertTrue(repr(SomeNotification()))
+        self.assertTrue(str(SomeNotification()))
 
     def test_default_notification(self):
 
@@ -133,6 +220,15 @@ class TestNotification(TestCase):
         ae.ae_grade = 3
         ae.save()
         self.assertEqual(len(mail.outbox), 1)
+
+    def test_model_notification(self):
+
+        class DeathNotification(ModelNotification):
+            name = "death"
+            model = "edc_notification.death"
+
+        repr(DeathNotification())
+        str(DeathNotification())
 
     def test_new_model_notification(self):
 
@@ -379,7 +475,8 @@ class TestNotification(TestCase):
 
     def test_graded_event_grade3_as_test_sms_message_to_subscribed_user(self):
 
-        user = User.objects.create(username="erikvw", is_active=True, is_staff=True)
+        user = User.objects.create(
+            username="erikvw", is_active=True, is_staff=True)
 
         site_notifications._registry = {}
         site_notifications.update_notification_list()
@@ -392,7 +489,8 @@ class TestNotification(TestCase):
             model = "edc_notification.ae"
 
         site_notifications.update_notification_list()
-        notification = NotificationModel.objects.get(name=G3EventNotification.name)
+        notification = NotificationModel.objects.get(
+            name=G3EventNotification.name)
         user.userprofile.sms_notifications.add(notification)
         user.userprofile.mobile = settings.TWILIO_TEST_RECIPIENT
         user.userprofile.save()
@@ -402,3 +500,37 @@ class TestNotification(TestCase):
         )
 
         AE.objects.create(subject_identifier="1", ae_grade=3)
+
+    def test_notification_model_instance_deletes_for_unregistered(self):
+
+        User.objects.create(
+            username="erikvw", is_active=True, is_staff=True)
+
+        site_notifications._registry = {}
+        site_notifications.update_notification_list(verbose=True)
+
+        class G3EventNotification(GradedEventNotification):
+            name = "g3_event"
+            display_name = "Test Grade3 Event"
+            grade = 3
+            model = "edc_notification.ae"
+
+        site_notifications.register(notification_cls=G3EventNotification)
+        site_notifications.update_notification_list(verbose=True)
+
+        self.assertEqual(
+            site_notifications.get("g3_event"), G3EventNotification)
+
+        try:
+            NotificationModel.objects.get(
+                name=G3EventNotification.name)
+        except ObjectDoesNotExist as e:
+            self.fail(
+                f'Notification model instance unexpectedly does not exist. Got {e}')
+
+        site_notifications._registry = {}
+        site_notifications.update_notification_list()
+
+        self.assertRaises(ObjectDoesNotExist,
+                          NotificationModel.objects.get,
+                          name=G3EventNotification.name)

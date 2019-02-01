@@ -32,4 +32,4 @@ class Notification(BaseUuidModel):
 
 
 if settings.APP_NAME == "edc_notification" and "makemigrations" not in sys.argv:
-    from .tests import models
+    from .tests import models  # noqa
