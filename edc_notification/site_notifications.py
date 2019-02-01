@@ -102,10 +102,16 @@ class SiteNotifications:
         """
         Notification = (apps or django_apps).get_model(
             'edc_notification', 'notification')
+
+        # flag all notifications as disabled and re-enable as required
         Notification.objects.all().update(enabled=False)
         if site_notifications.loaded:
             sys.stdout.write(style.MIGRATE_HEADING(
                 f'Populating Notification model:\n'))
+            deleted, _ = self.delete_unregistered_notifications(apps=apps)
+            if deleted and verbose:
+                sys.stdout.write(
+                    f'  * Deleted {deleted} orphaned notifications.\n')
             for name, notification_cls in site_notifications.registry.items():
                 if verbose:
                     sys.stdout.write(
@@ -131,6 +137,14 @@ class SiteNotifications:
                     obj.display_name = notification_cls().display_name
                     obj.enabled = True
                     obj.save()
+
+    def delete_unregistered_notifications(self, apps=None):
+        """Delete orphaned notification model instances.
+        """
+        Notification = (apps or django_apps).get_model(
+            'edc_notification', 'notification')
+        return Notification.objects.exclude(
+            name__in=[n.name for n in site_notifications.registry.values()]).delete()
 
     def create_mailing_lists(self, verbose=True):
         """Creates the mailing list for each registered notification.
