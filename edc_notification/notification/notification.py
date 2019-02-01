@@ -162,8 +162,7 @@ class Notification:
             # trigger exception if this class is not registered.
             site_notifications.get(self.name)
 
-            NotificationModel = django_apps.get_model(
-                "edc_notification.notification")
+            NotificationModel = django_apps.get_model("edc_notification.notification")
             try:
                 obj = NotificationModel.objects.get(name=self.name)
             except ObjectDoesNotExist:
@@ -177,8 +176,7 @@ class Notification:
 
         Extend using `extra_template_options`.
         """
-        protocol_name = django_apps.get_app_config(
-            "edc_protocol").protocol_name
+        protocol_name = django_apps.get_app_config("edc_protocol").protocol_name
         test_message = test_message or self.test_message
         template_options = dict(
             name=self.name,
@@ -195,8 +193,7 @@ class Notification:
         )
         if "subject_identifier" not in template_options:
             try:
-                template_options.update(
-                    subject_identifier=instance.subject_identifier)
+                template_options.update(subject_identifier=instance.subject_identifier)
             except AttributeError:
                 pass
         if "site_name" not in template_options:
@@ -228,8 +225,7 @@ class Notification:
                 if not fail_silently:
                     raise
             else:
-                recipients = [
-                    sms_recipient] if sms_recipient else self.sms_recipients
+                recipients = [sms_recipient] if sms_recipient else self.sms_recipients
                 for recipient in recipients:
                     try:
                         message = client.messages.create(
