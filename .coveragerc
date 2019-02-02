@@ -1,4 +1,5 @@
 [run]
+source = edc_notification
 omit =
     */wsgi.py
     */config_utils/*
