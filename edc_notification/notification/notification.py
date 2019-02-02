@@ -22,7 +22,7 @@ class Notification:
     sms_client = Client
 
     email_from = settings.EMAIL_CONTACTS.get("data_manager")
-    email_to = None
+    email_to = None  # usually a mailing list address
     email_message_cls = EmailMessage
 
     email_body_template = (
@@ -159,18 +159,24 @@ class Notification:
         See also: `site_notifications.update_notification_list`
         """
         if not self._notification_enabled:
-            # trigger exception if this class is not registered.
-            site_notifications.get(self.name)
-
-            NotificationModel = django_apps.get_model(
-                "edc_notification.notification")
-            try:
-                obj = NotificationModel.objects.get(name=self.name)
-            except ObjectDoesNotExist:
-                site_notifications.update_notification_list()
-                obj = NotificationModel.objects.get(name=self.name)
-            self._notification_enabled = obj.enabled
+            self._notification_enabled = self.notification_model.enabled
         return self._notification_enabled
+
+    @property
+    def notification_model(self):
+        """Returns the Notification 'model' instance associated
+        with this notification.
+        """
+        NotificationModel = django_apps.get_model(
+            "edc_notification.notification")
+        # trigger exception if this class is not registered.
+        site_notifications.get(self.name)
+        try:
+            notification_model = NotificationModel.objects.get(name=self.name)
+        except ObjectDoesNotExist:
+            site_notifications.update_notification_list()
+            notification_model = NotificationModel.objects.get(name=self.name)
+        return notification_model
 
     def get_template_options(self, instance=None, test_message=None, **kwargs):
         """Returns a dictionary of message template options.

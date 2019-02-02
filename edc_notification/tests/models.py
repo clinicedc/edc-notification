@@ -10,12 +10,12 @@ class TestModel(BaseUuidModel):
     pass
 
 
-class Condition(models.Model):
+class Condition(BaseUuidModel):
 
     name = models.CharField(max_length=25, default='anemia')
 
 
-class AnyModel(models.Model):
+class AnyModel(BaseUuidModel):
 
     name = models.CharField(max_length=25, default='anemia')
 

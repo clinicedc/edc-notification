@@ -1,13 +1,13 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.test.testcases import TestCase
+from django.test.utils import override_settings
 
 from ..decorators import register
 from ..models import Notification as NotificationModel
 from ..notification import GradedEventNotification
 from ..site_notifications import site_notifications
 from .models import AE
-from django.test.utils import override_settings
 
 
 class TwilioTestClient:
