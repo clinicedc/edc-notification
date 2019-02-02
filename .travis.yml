@@ -21,7 +21,7 @@ before_script:
 script:
 - coverage run -m tox
 after_success:
-- coveralls
+- codecov
 
 
 matrix:
