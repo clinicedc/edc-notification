@@ -1,1 +1,2 @@
 edc-auth
+edc-model-admin

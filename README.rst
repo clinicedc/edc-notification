@@ -1,4 +1,4 @@
-|pypi| |travis| |coverage|
+|pypi| |travis| |codecov|
 
 edc-notification
 ----------
@@ -13,7 +13,5 @@ Send notifications to users
 .. |travis| image:: https://travis-ci.org/clinicedc/edc-notification.svg?branch=develop
     :target: https://travis-ci.org/clinicedc/edc-notification
     
-.. |coverage| image:: https://coveralls.io/repos/github/clinicedc/edc-notification/badge.svg?branch=develop
-    :target: https://coveralls.io/github/clinicedc/edc-notification?branch=develop
-
-
+.. |codecov| image:: https://codecov.io/gh/clinicedc/edc-notification/branch/develop/graph/badge.svg
+  :target: https://codecov.io/gh/clinicedc/edc-notification
