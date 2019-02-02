@@ -1,8 +1,4 @@
 [run]
-source = edc_notification
-omit =
-    */wsgi.py
-    */config_utils/*
-    */navbars.py
-    */migrations/*
-    */mommy_*
+include = edc_notification/*
+omit = edc_notification/tests/*
+branch = 1
