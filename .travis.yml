@@ -10,19 +10,23 @@ sudo: true
 addons:
   apt_packages:
   - libcups2-dev
+
 services:
 - mysql
+
 install:
 - pip install --upgrade pip
 - pip install flake8 coveralls tox-travis
+
 before_script:
 - flake8 edc_notification
 - mysql -e 'create database edc character set utf8;'
+
 script:
 - coverage run -m tox
+
 after_success:
 - codecov
-
 
 matrix:
   include:
