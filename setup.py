@@ -10,7 +10,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
 with open(os.path.join(os.path.dirname(__file__), 'VERSION')) as f:
     VERSION = f.read()
 
-tests_require = ["requests_mock", "edc-model-admin", "edc-sites"]
+tests_require = ["edc-model-admin", "edc-sites"]
 with open(join(dirname(abspath(__file__)), 'requirements.txt')) as f:
     for line in f:
         tests_require.append(line.strip())
@@ -33,9 +33,10 @@ setup(
     keywords='edc notification',
     install_requires=[
         'django_simple_history',
+        'edc-auth',
         'edc-model',
         'edc-utils',
-        'requests'
+        'requests',
         'twilio',
     ],
     classifiers=[
