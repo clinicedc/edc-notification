@@ -14,7 +14,7 @@ Send notifications to users
     :target: https://travis-ci.org/clinicedc/edc-notification
     
 .. |codecov| image:: https://codecov.io/gh/clinicedc/edc-notification/branch/develop/graph/badge.svg
-  :target: https://codecov.io/gh/clinicedc/edc-notification
+    :target: https://codecov.io/gh/clinicedc/edc-notification
 
- .. |downloads| image:: https://pepy.tech/badge/edc-notification
-   :target: https://pepy.tech/project/edc-notification
+.. |downloads| image:: https://pepy.tech/badge/edc-notification
+    :target: https://pepy.tech/project/edc-notification
