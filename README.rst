@@ -1,7 +1,7 @@
 |pypi| |travis| |codecov| |downloads|
 
 edc-notification
-----------
+----------------
 
 Send notifications to users
 
