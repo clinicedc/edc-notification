@@ -3,7 +3,6 @@ from setuptools import find_packages
 from setuptools import setup
 from os.path import join, abspath, normpath, dirname
 
-
 with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
     README = readme.read()
 
@@ -32,10 +31,6 @@ setup(
     zip_safe=False,
     keywords='edc notification',
     install_requires=[
-        'django_simple_history',
-        'edc-auth',
-        'edc-model',
-        'edc-utils',
         'requests',
         'twilio',
     ],

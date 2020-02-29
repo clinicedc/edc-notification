@@ -8,7 +8,6 @@ from django.test.runner import DiscoverRunner
 from edc_test_utils import DefaultTestSettings
 from os.path import abspath, dirname, join
 
-
 base_dir = dirname(abspath(__file__))
 app_name = 'edc_notification'
 
@@ -16,7 +15,6 @@ DEFAULT_SETTINGS = DefaultTestSettings(
     calling_file=__file__,
     BASE_DIR=base_dir,
     APP_NAME=app_name,
-    AUTO_CREATE_KEYS=False,
     ETC_DIR=join(base_dir, app_name, "tests", "etc"),
     INSTALLED_APPS=[
         "django.contrib.admin",
@@ -30,6 +28,7 @@ DEFAULT_SETTINGS = DefaultTestSettings(
         "django_revision.apps.AppConfig",
         "edc_auth.apps.AppConfig",
         "edc_device.apps.AppConfig",
+        "edc_randomization.apps.AppConfig",
         "edc_dashboard.apps.AppConfig",
         "edc_identifier.apps.AppConfig",
         "edc_sites.apps.AppConfig",
