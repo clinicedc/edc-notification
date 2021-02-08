@@ -1,15 +1,15 @@
 #!/usr/bin/env python
-import django
 import logging
 import sys
+from os.path import abspath, dirname, join
 
+import django
 from django.conf import settings
 from django.test.runner import DiscoverRunner
 from edc_test_utils import DefaultTestSettings
-from os.path import abspath, dirname, join
 
 base_dir = dirname(abspath(__file__))
-app_name = 'edc_notification'
+app_name = "edc_notification"
 
 DEFAULT_SETTINGS = DefaultTestSettings(
     calling_file=__file__,
@@ -35,8 +35,7 @@ DEFAULT_SETTINGS = DefaultTestSettings(
         "edc_protocol.apps.AppConfig",
         "edc_notification.apps.AppConfig",
     ],
-    RANDOMIZATION_LIST_PATH=join(
-        base_dir, app_name, "tests", "test_randomization_list.csv"),
+    RANDOMIZATION_LIST_PATH=join(base_dir, app_name, "tests", "test_randomization_list.csv"),
     add_dashboard_middleware=True,
 ).settings
 
@@ -45,9 +44,8 @@ def main():
     if not settings.configured:
         settings.configure(**DEFAULT_SETTINGS)
     django.setup()
-    tags = [t.split('=')[1] for t in sys.argv if t.startswith('--tag')]
-    failures = DiscoverRunner(failfast=False, tags=tags).run_tests(
-        [f'{app_name}.tests'])
+    tags = [t.split("=")[1] for t in sys.argv if t.startswith("--tag")]
+    failures = DiscoverRunner(failfast=False, tags=tags).run_tests([f"{app_name}.tests"])
     sys.exit(failures)
 
 
