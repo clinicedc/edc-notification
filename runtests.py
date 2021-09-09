@@ -16,6 +16,7 @@ DEFAULT_SETTINGS = DefaultTestSettings(
     BASE_DIR=base_dir,
     APP_NAME=app_name,
     ETC_DIR=join(base_dir, app_name, "tests", "etc"),
+    EDC_AUTH_CODENAMES_WARN_ONLY=True,
     INSTALLED_APPS=[
         "django.contrib.admin",
         "django.contrib.auth",
