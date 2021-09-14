@@ -6,6 +6,7 @@ from os.path import abspath, dirname, join
 import django
 from django.conf import settings
 from django.test.runner import DiscoverRunner
+from edc_constants.constants import IGNORE
 from edc_test_utils import DefaultTestSettings
 
 base_dir = dirname(abspath(__file__))
@@ -17,6 +18,7 @@ DEFAULT_SETTINGS = DefaultTestSettings(
     APP_NAME=app_name,
     ETC_DIR=join(base_dir, app_name, "tests", "etc"),
     EDC_AUTH_CODENAMES_WARN_ONLY=True,
+    EDC_NAVBAR_VERIFY_ON_LOAD=IGNORE,
     INSTALLED_APPS=[
         "django.contrib.admin",
         "django.contrib.auth",
@@ -29,6 +31,7 @@ DEFAULT_SETTINGS = DefaultTestSettings(
         "django_revision.apps.AppConfig",
         "edc_auth.apps.AppConfig",
         "edc_device.apps.AppConfig",
+        "edc_export.apps.AppConfig",
         "edc_randomization.apps.AppConfig",
         "edc_dashboard.apps.AppConfig",
         "edc_identifier.apps.AppConfig",
@@ -38,6 +41,7 @@ DEFAULT_SETTINGS = DefaultTestSettings(
     ],
     RANDOMIZATION_LIST_PATH=join(base_dir, app_name, "tests", "test_randomization_list.csv"),
     add_dashboard_middleware=True,
+    # add_lab_dashboard_middleware=True,
 ).settings
 
 
