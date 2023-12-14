@@ -10,8 +10,8 @@ Send notifications to users
 .. |pypi| image:: https://img.shields.io/pypi/v/edc-notification.svg
     :target: https://pypi.python.org/pypi/edc-notification
 
-.. |actions| image:: https://github.com/clinicedc/edc-notification/workflows/build/badge.svg?branch=develop
-  :target: https://github.com/clinicedc/edc-notification/actions?query=workflow:build
+.. |actions| image:: https://github.com/clinicedc/edc-notification/actions/workflows/build.yml/badge.svg
+  :target: https://github.com/clinicedc/edc-notification/actions/workflows/build.yml
 
 .. |codecov| image:: https://codecov.io/gh/clinicedc/edc-notification/branch/develop/graph/badge.svg
     :target: https://codecov.io/gh/clinicedc/edc-notification
