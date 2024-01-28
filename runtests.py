@@ -19,6 +19,12 @@ project_settings = DefaultTestSettings(
         "edc_navbar.E003",
         "edc_consent.E001",
     ],
+    EMAIL_ENABLED=True,
+    EMAIL_CONTACTS={
+        "ae_reports": "aereports@example.com",
+        "data_manager": "data_manager@example.com",
+        "tmg": "tmg@example.com",
+    },
     EDC_SITES_REGISTER_DEFAULT=True,
     SUBJECT_VISIT_MODEL="edc_visit_tracking.subjectvisit",
     INSTALLED_APPS=[
